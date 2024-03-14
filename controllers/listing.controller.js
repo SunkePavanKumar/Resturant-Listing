@@ -46,8 +46,8 @@ export const listing = async (req, res) => {
 // get all the restaurant details
 export const getListings = async (req, res) => {
   try {
-    const restaurants = await Listing.find({}).lean().exec();
-    if (!restaurants) {
+    const restaurants = await Listing.find().lean().exec();
+    if (!restaurants || restaurants.length === 0) {
       return res.status("400").json({
         success: false,
         message: "No Restaurants are available",
@@ -71,7 +71,7 @@ export const getListings = async (req, res) => {
 // get the restaurant details by ID
 export const getListingById = async (req, res) => {
   try {
-    const listing = await Listing.findById(req.params.id);
+    const listing = await Listing.findById(req.params.id).lean().exec();
     if (!listing) {
       return res.status(404).json({
         success: false,
@@ -138,6 +138,39 @@ export const updateListing = async (req, res) => {
   try {
   } catch (error) {
     console.log(`Error while updating the restaurant details Error : ${error}`);
+    res.status(404).json({
+      success: false,
+      message: "Something went wrong",
+    });
+  }
+};
+
+// delete the listing
+
+export const deleteListing = async (req, res) => {
+  try {
+    // check the role permission to delete.
+
+    if (req.role === "user" || req.role === "business_owner") {
+      return res.status("400").json({
+        success: false,
+        message: "Permission Declined",
+      });
+    }
+    const deletedListing = await Listing.findByIdAndDelete(req.params.id);
+    if (!deletedListing) {
+      return res.status(404).json({
+        success: false,
+        message: "Listing not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Listing deleted Successfully",
+    });
+  } catch (error) {
+    console.log(`Error while deleting the restaurant details Error : ${error}`);
     res.status(404).json({
       success: false,
       message: "Something went wrong",
