@@ -3,6 +3,7 @@ import User from "../models/users.model.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import loginSchema from "../validations/login.validate.js";
+
 export const register = async (req, res) => {
   try {
     // validate the request body using zod
@@ -35,7 +36,7 @@ export const register = async (req, res) => {
 
     // generate JWT token
     const token = jwt.sign(
-      { userId: user._id, role: user.role },
+      { userId: newUser._id, role: newUser.role },
       process.env.JWT_SCRECT,
       {
         expiresIn: "1h",
