@@ -4,7 +4,7 @@ export default async function authMiddleware(req, res, next) {
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
     return res.status(403).json({
       success: false,
-      message: "Please provide the valid heder",
+      message: "Please provide the valid header",
     });
   }
   const token = authHeader.split(" ")[1];
